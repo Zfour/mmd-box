@@ -4,7 +4,7 @@
 进度：
 2022/7/26 
 
-1.按照B站教程<a href="https://www.bilibili.com/video/BV1aV411o7N6">【伪全息播放盒】会动的手办了解一下</a>手工diy了伪全息投影盒子，并计划开发相应网页端支持控制脚本。
+1.按照B站教程<a href="https://www.bilibili.com/video/BV1aV411o7N6">【伪全息播放盒】会动的手办了解一下</a> 手工diy了伪全息投影盒子，并计划开发相应网页端支持控制脚本。
 
 <img style="width:auto;height:500px;" src="https://github.com/Zfour/mmd-box/blob/master/picture/1.gif">
 
