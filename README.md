@@ -11,6 +11,8 @@
 
 2.完成了网页端的简单开发，将hexo clock插件进行了移植及盒子界面自适应。
 
+<a href="https://zfour.github.io/mmd-box/templates/box_view/index.html">预览地址</a> 
+
 3.初步尝试python flask socketio 并跑通本地局域网通信。
 
 ### 提出初步需求：
