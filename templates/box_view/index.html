@@ -89,12 +89,16 @@ body::-webkit-scrollbar {display:none}
 <body>
 <div class="videocontainer" >
 	<video class="fullscreenvideo"  id="bgvid" playsinline="" autoplay="" muted="" loop="">
-		<source src="video/bg.mp4" type="video/mp4">
+		<source src="../.{{now_play_video_src}}" type="video/mp4">
 	</video>
 </div>
 <div id="mmd_box" ></div>
 <script src="https://pv.sohu.com/cityjson?ie=utf-8"></script>
+ <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/socket.io/3.1.2/socket.io.min.js"></script>
 <script>
+    const bgvid=document.querySelector("#bgvid")
+
     console.log(returnCitySN["cip"])
     function update_message(){
         fetch('https://wttr.in/'+returnCitySN["cip"]+'?format="%l+\\+%c+\\+%t+\\+%h"').then(res=>res.text()).then(
@@ -174,6 +178,23 @@ function next_hour_update(){
 }
 update_message()
 next_hour_update()
+
+    $(document).ready(function () {
+    namespace = '/dcenter';
+    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+    socket.on('dcenter', function (res) {
+        var t = res.data;
+        var t_video_src=res.video_src;
+
+        console.log(t)
+        console.log(t_video_src)
+        if (t==="next video!"){
+             console.log("执行播放下一段视频的操作！")
+             bgvid.src ="../."+t_video_src
+
+        }
+    });
+});
 </script>
 </body>
 </html>
