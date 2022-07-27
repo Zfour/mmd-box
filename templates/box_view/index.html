@@ -98,8 +98,9 @@ body::-webkit-scrollbar {display:none}
     <script type="text/javascript" src="//cdn.bootcss.com/socket.io/3.1.2/socket.io.min.js"></script>
 <script>
     const bgvid=document.querySelector("#bgvid")
-
+    const mmd_uibox=$("#mmd_box")
     console.log(returnCitySN["cip"])
+
     function update_message(){
         fetch('https://wttr.in/'+returnCitySN["cip"]+'?format="%l+\\+%c+\\+%t+\\+%h"').then(res=>res.text()).then(
     data => {
@@ -192,6 +193,14 @@ next_hour_update()
              console.log("执行播放下一段视频的操作！")
              bgvid.src ="../."+t_video_src
 
+        }
+        else if(t==="show_mode_1!"){
+            console.log("切换为正常显示模式！")
+            mmd_uibox.show()
+        }
+        else if(t==="show_mode_2!"){
+            console.log("切换为UI隐藏模式！")
+            mmd_uibox.hide()
         }
     });
 });

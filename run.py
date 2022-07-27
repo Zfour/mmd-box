@@ -62,6 +62,20 @@ def push_once():
     socketio.emit(event_name, broadcasted_data, broadcast=False, namespace=name_space)
     return '成功执行操作！已切换至下一个视频！'
 
+@app.route('/show_mode_1')
+def show_mode_1():
+    event_name = 'dcenter'
+    broadcasted_data = {'data': "show_mode_1!"}
+    socketio.emit(event_name, broadcasted_data, broadcast=False, namespace=name_space)
+    return '切换为正常显示模式！'
+
+@app.route('/show_mode_2')
+def show_mode_2():
+    event_name = 'dcenter'
+    broadcasted_data = {'data': "show_mode_2!"}
+    socketio.emit(event_name, broadcasted_data, broadcast=False, namespace=name_space)
+    return '切换为隐藏UI模式！'
+
 if __name__ == '__main__':
 
     socketio.run(app, host='0.0.0.0', port=5050, debug=True)
