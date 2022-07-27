@@ -13,11 +13,14 @@ name_space = '/dcenter'
 video_path = r".\static\video"  # 文件夹目录
 video_list=[] #路径列表
 
+
 #读取当前video播放id，默认存储上一次的值
-with open("config.json","r") as f:
+with open("static/config.json", "r") as f:
     row_data=json.load(f)
-current_video_id=int(row_data['current_video_ID'])
-print(current_video_id)
+current_video_src=row_data['current_video_src']
+current_show_mode_id=int(row_data['current_show_mode'])
+#print("当前播放视频为第"+str(current_video_src+1)+"个")
+print("当前显示模式"+str(current_show_mode_id))
 
 for root,dirs,files in os.walk(video_path):
     for file in files:
@@ -42,23 +45,23 @@ def mtest_message(message):
 # mmd-box相关规则
 @app.route('/')
 def index():
-    now_play_video_src=video_list[current_video_id]
-    return render_template('box_view/index.html',now_play_video_src=now_play_video_src)
+    now_play_video_src=current_video_src
+    return render_template('box_view/index.html',now_play_video_src=now_play_video_src,current_show_mode_id=current_show_mode_id)
 #播放下一段视频
 @app.route('/nextvideo')
 def push_once():
     video_list = []
-    with open("config.json", "r") as load_f:
+    with open("static/config.json", "r") as load_f:
         row_data = json.load(load_f)
     for root, dirs, files in os.walk(video_path):
         for file in files:
             video_list.append(os.path.join(root, file).replace("\\", "/"))
-    current_video_id = (int(row_data['current_video_ID']) + 1)%len(video_list)
-    row_data['current_video_ID']=current_video_id
-    with open("config.json", "w") as dunp_f:
+    current_video_src = (int(video_list.index(row_data['current_video_src'].replace("\\", "/"))) + 1)%len(video_list)
+    row_data['current_video_src']=video_list[current_video_src]
+    with open("static/config.json", "w") as dunp_f:
         json.dump(row_data, dunp_f)
     event_name = 'dcenter'
-    broadcasted_data = {'data': "next video!","video_src":video_list[row_data['current_video_ID']]}
+    broadcasted_data = {'data': "next video!","video_src":video_list[current_video_src]}
     socketio.emit(event_name, broadcasted_data, broadcast=False, namespace=name_space)
     return '成功执行操作！已切换至下一个视频！'
 
@@ -67,6 +70,12 @@ def show_mode_1():
     event_name = 'dcenter'
     broadcasted_data = {'data': "show_mode_1!"}
     socketio.emit(event_name, broadcasted_data, broadcast=False, namespace=name_space)
+    with open("static/config.json", "r") as load_f:
+        row_data = json.load(load_f)
+    current_show_mode_id = 1
+    row_data['current_show_mode']=current_show_mode_id
+    with open("static/config.json", "w") as dunp_f:
+        json.dump(row_data, dunp_f)
     return '切换为正常显示模式！'
 
 @app.route('/show_mode_2')
@@ -74,7 +83,19 @@ def show_mode_2():
     event_name = 'dcenter'
     broadcasted_data = {'data': "show_mode_2!"}
     socketio.emit(event_name, broadcasted_data, broadcast=False, namespace=name_space)
+    with open("static/config.json", "r") as load_f:
+        row_data = json.load(load_f)
+    current_show_mode_id = 2
+    row_data['current_show_mode']=current_show_mode_id
+    with open("static/config.json", "w") as dunp_f:
+        json.dump(row_data, dunp_f)
     return '切换为隐藏UI模式！'
+
+@app.route('/show_config')
+def show_config():
+    with open("static/config.json", "r") as load_f:
+        row_data = json.load(load_f)
+    return row_data
 
 if __name__ == '__main__':
 

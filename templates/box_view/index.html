@@ -96,9 +96,24 @@ body::-webkit-scrollbar {display:none}
 <script src="https://pv.sohu.com/cityjson?ie=utf-8"></script>
  <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
     <script type="text/javascript" src="//cdn.bootcss.com/socket.io/3.1.2/socket.io.min.js"></script>
+
 <script>
     const bgvid=document.querySelector("#bgvid")
     const mmd_uibox=$("#mmd_box")
+$.getJSON('static/config.json','', function(data) {
+    console.log( data)
+    var current_show_mode_id =data['current_show_mode']
+      if (current_show_mode_id===1){
+         mmd_uibox.show()
+    }
+    else {
+         mmd_uibox.hide()
+    }
+    bgvid.src =data['current_video_src']
+
+})
+
+
     console.log(returnCitySN["cip"])
 
     function update_message(){
