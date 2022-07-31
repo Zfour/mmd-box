@@ -88,7 +88,7 @@ body::-webkit-scrollbar {display:none}
 </head>
 <body>
 <div class="videocontainer" >
-	<video class="fullscreenvideo"  id="bgvid" playsinline="" autoplay="" muted="" loop="">
+	<video class="fullscreenvideo"  id="bgvid" playsinline="" autoplay="" muted="" >
 		<source src="../.{{now_play_video_src}}" type="video/mp4">
 	</video>
 </div>
@@ -98,6 +98,8 @@ body::-webkit-scrollbar {display:none}
     <script type="text/javascript" src="//cdn.bootcss.com/socket.io/3.1.2/socket.io.min.js"></script>
 
 <script>
+console.log("MMD盒子桌面时钟Beta 0.3 made by icekano")
+console.log("github：https://github.com/Zfour/mmd-box")
     const bgvid=document.querySelector("#bgvid")
     const mmd_uibox=$("#mmd_box")
 $.getJSON('static/config.json','', function(data) {
@@ -109,8 +111,21 @@ $.getJSON('static/config.json','', function(data) {
     else {
          mmd_uibox.hide()
     }
+
     bgvid.src =data['current_video_src']
 
+    bgvid.addEventListener("ended",function (){
+        $.get(window.location.href+"nextvideo")
+        console.log("自动切换下一个视频！")
+        }
+    )
+     var current_play_mode_id=data['play_mode']
+if (current_play_mode_id===1){
+       bgvid.loop=true
+    }
+    else if(current_play_mode_id===2) {
+        bgvid.loop=false
+    }
 })
 
 
@@ -217,8 +232,17 @@ next_hour_update()
             console.log("切换为UI隐藏模式！")
             mmd_uibox.hide()
         }
+        else if(t==="play_mode_1!"){
+            console.log("切换为单个循环模式！")
+            bgvid.loop=true
+        }
+        else if(t==="play_mode_2!"){
+            console.log("切换为列表播放模式！")
+            bgvid.loop=false
+        }
     });
 });
+
 </script>
 </body>
 </html>
