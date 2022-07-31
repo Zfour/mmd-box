@@ -124,6 +124,15 @@ def play_mode_2():
 def show_config():
     with open("static/config.json", "r") as load_f:
         row_data = json.load(load_f)
+    if row_data['current_show_mode']==1:
+        row_data['current_show_mode']='UI显示'
+    elif row_data['current_show_mode']==2:
+        row_data['current_show_mode'] = 'UI隐藏'
+    if row_data['play_mode'] == 1:
+        row_data['play_mode'] = '单个循环'
+    elif row_data['play_mode'] == 2:
+        row_data['play_mode'] = '列表循环'
+    row_data['current_video_src']=row_data['current_video_src'].replace('./static/video/','')
     return row_data
 
 if __name__ == '__main__':
