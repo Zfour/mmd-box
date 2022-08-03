@@ -50,5 +50,6 @@
 
 ## 2022/8/4
 1.1.0版本图形界面开发完成，目前打包遇见bug，尚未跑通，ide版本刷新网页有概率触发bug待修复
+
 2.图形界面如下
 ![image](https://user-images.githubusercontent.com/19563906/182721739-2bfad9e1-ab27-4cb5-bec7-acdc33a839eb.png)
