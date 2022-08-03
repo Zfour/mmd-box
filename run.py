@@ -85,6 +85,32 @@ def push_once():
     socketio.emit(event_name, broadcasted_data, broadcast=False, namespace=name_space)
     return '成功执行操作！已切换至下一个视频！'
 
+#播放下一段视频
+@app.route('/lastvideo')
+def push_once_last():
+    video_path = "./static/video"
+    video_list = get_video_list(video_path)
+    with open("static/config.json", "r") as load_f:
+        row_data = json.load(load_f)
+    print(video_list)
+    print(row_data['current_video_src'])
+    #获取当前播放视频的文件夹index&异常处理
+    if row_data['current_video_src'] in video_list:
+        current_video_src = (int(video_list.index(row_data['current_video_src'].replace("\\", "/"))) - 1) % len(
+            video_list)
+        row_data['current_video_src'] = video_list[current_video_src]
+
+    else:
+        row_data['current_video_src'] = video_list[0]
+
+    with open("static/config.json", "w") as dunp_f:
+        json.dump(row_data, dunp_f)
+    event_name = 'dcenter'
+    video_src= row_data['current_video_src']
+    broadcasted_data = {'data': "last video!","video_src":video_src}
+    socketio.emit(event_name, broadcasted_data, broadcast=False, namespace=name_space)
+    return '成功执行操作！已切换至上一个视频！'
+
 #切换UI显示模式
 @app.route('/show_mode_1')
 def show_mode_1():
@@ -135,6 +161,9 @@ def show_config():
     row_data['current_video_src']=row_data['current_video_src'].replace('./static/video/','')
     return row_data
 
-if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5050, debug=True)
+
+
+def start():
+    socketio.run(app, host='0.0.0.0', port=5050, debug=False,use_reloader=False)
+
 

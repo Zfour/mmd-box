@@ -89,7 +89,7 @@ body::-webkit-scrollbar {display:none}
 <body>
 <div class="videocontainer" >
 	<video class="fullscreenvideo"  id="bgvid" playsinline="" autoplay="" muted="" >
-		<source src="../.{{now_play_video_src}}" type="video/mp4">
+		<source src="" type="video/mp4">
 	</video>
 </div>
 <div id="mmd_box" ></div>
@@ -98,7 +98,7 @@ body::-webkit-scrollbar {display:none}
     <script type="text/javascript" src="//cdn.bootcss.com/socket.io/3.1.2/socket.io.min.js"></script>
 
 <script>
-console.log("MMD盒子桌面时钟Beta 0.3 made by icekano")
+console.log("MMD盒子桌面时钟Beta 1.0 made by icekano")
 console.log("github：https://github.com/Zfour/mmd-box")
     const bgvid=document.querySelector("#bgvid")
     const mmd_uibox=$("#mmd_box")
@@ -223,6 +223,10 @@ next_hour_update()
              console.log("执行播放下一段视频的操作！")
              bgvid.src ="../."+t_video_src
 
+        }
+        else if(t==="last video!"){
+            console.log("执行播放上一段视频的操作！")
+            bgvid.src ="../."+t_video_src
         }
         else if(t==="show_mode_1!"){
             console.log("切换为正常显示模式！")
