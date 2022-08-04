@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>伪全息盒子时钟 Beta 0.1</title>
+    <style>
+        html,body
+{
+    height: 100%;
+    margin: 0px;
+}
+        #mmd_box{
+            display: flex;
+            justify-content: space-between;
+            flex-direction:column;
+            height: 100%;
+        }
+        @font-face {
+    font-family: 'UnidreamLED'; /*a name to be used later*/
+    src: url('https://cdn.jsdelivr.net/gh/Zfour/Butterfly-clock/clock/fonts/UnidreamLED.ttf'); /*URL to font*/
+}
+body::-webkit-scrollbar {display:none}
+.clock-row{
+    font-family: UnidreamLED;
+    font-size: 80px;
+    font-weight: 400;
+    color: #000;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+.card-clock-clockdate,.card-clock-ip{
+    text-align: left;
+    flex-basis: calc(40% - 5px);
+}
+.card-clock-weather,.card-clock-location{
+    text-align: center;
+    flex-basis: calc(30% - 5px);
+}
+.card-clock-humidity,.card-clock-dackorlight{
+    text-align: right;
+    flex-basis: calc(30% - 5px);
+}
+.card-clock-time{
+    flex: 1;
+    font-family: UnidreamLED;
+    font-size: 320px;
+    text-align: center;
+    margin-bottom:1800px;
+
+}
+.fullscreenvideo {
+	position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -100;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+    transform: translateX(-50%) translateY(-50%);
+    -webkit-transition: 1s opacity;
+    transition: 1s opacity;
+}
+
+.videocontainer{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -100;
+}
+
+.videocontainer:before{
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: -1;
+    top: 0;
+    left: 0;
+
+}
+    </style>
+</head>
+<body>
+<div class="videocontainer" >
+	<video class="fullscreenvideo"  id="bgvid" playsinline="" autoplay="" muted="" >
+		<source src="" type="video/mp4">
+	</video>
+</div>
+<div id="mmd_box" ></div>
+<script src="https://pv.sohu.com/cityjson?ie=utf-8"></script>
+ <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/socket.io/3.1.2/socket.io.min.js"></script>
+
+<script>
+console.log("MMD盒子桌面时钟Beta 1.0 made by icekano")
+console.log("github：https://github.com/Zfour/mmd-box")
+    const bgvid=document.querySelector("#bgvid")
+    const mmd_uibox=$("#mmd_box")
+$.getJSON('static/config.json','', function(data) {
+    console.log( data)
+    var current_show_mode_id =data['current_show_mode']
+      if (current_show_mode_id===1){
+         mmd_uibox.show()
+    }
+    else {
+         mmd_uibox.hide()
+    }
+
+    bgvid.src =data['current_video_src']
+
+    bgvid.addEventListener("ended",function (){
+        $.get(window.location.href+"nextvideo")
+        console.log("自动切换下一个视频！")
+        }
+    )
+     var current_play_mode_id=data['play_mode']
+if (current_play_mode_id===1){
+       bgvid.loop=true
+    }
+    else if(current_play_mode_id===2) {
+        bgvid.loop=false
+    }
+})
+
+
+    console.log(returnCitySN["cip"])
+
+    function update_message(){
+        fetch('https://wttr.in/'+returnCitySN["cip"]+'?format="%l+\\+%c+\\+%t+\\+%h"').then(res=>res.text()).then(
+    data => {
+        var res_text = data.replace(/not found/g,'not found,not found').replace(/"/g,'').replace(/\+/g,'').replace(/,/g,'\\').replace(/ /g,'').replace(/°C/g,'');
+        res_list = res_text.split('\\');
+        var clock_box = document.getElementById('mmd_box');
+        clock_box_html = `
+  <div class="clock-row">
+<span id="card-clock-clockdate" class="card-clock-clockdate"></span>
+<span class="card-clock-weather">${res_list[2]} ${res_list[3]} *C</span>
+<span class="card-clock-humidity">💧 ${res_list[4]}</span>
+</div>
+  <div class="clock-row"><span id="card-clock-time" class="card-clock-time"></span></div>
+
+  <div class="clock-row">
+  <span class="card-clock-ip">${returnCitySN["cip"]}</span>
+<span class="card-clock-location">${res_list[0]}</span>
+  <span id="card-clock-dackorlight" class="card-clock-dackorlight"></span>
+</div>
+`;
+        var week = ['SUN', 'MON', 'TUE', 'WED','THU' ,'FRI', 'SAT'];
+        clock_box.innerHTML= clock_box_html;
+        function updateTime() {
+            var cd = new Date();
+            var card_clock_time = zeroPadding(cd.getHours(), 2) + ':' + zeroPadding(cd.getMinutes(), 2) + ':' + zeroPadding(cd.getSeconds(), 2);
+            var card_clock_date = zeroPadding(cd.getFullYear(), 4) + '-' + zeroPadding(cd.getMonth()+1, 2) + '-' + zeroPadding(cd.getDate(), 2) + ' '+ week[cd.getDay()];
+            var card_clock_dackorlight = cd.getHours();
+            var card_clock_dackorlight_str;
+            if(card_clock_dackorlight >12) {
+                card_clock_dackorlight -= 12;
+                card_clock_dackorlight_str = " PM";
+            }else{
+                card_clock_dackorlight_str = " AM";
+            }
+            if(document.getElementById('card-clock-time')){
+            var card_clock_time_dom = document.getElementById('card-clock-time');
+            var card_clock_date_dom = document.getElementById('card-clock-clockdate');
+            var card_clock_dackorlight_dom = document.getElementById('card-clock-dackorlight');
+            card_clock_time_dom.innerHTML= card_clock_time;
+            card_clock_date_dom.innerHTML= card_clock_date;
+            card_clock_dackorlight_dom.innerHTML= card_clock_dackorlight_str
+                }
+        }
+
+        function zeroPadding(num, digit) {
+            var zero = '';
+            for(var i = 0; i < digit; i++) {
+                zero += '0';
+            }
+            return (zero + num).slice(-digit);
+        }
+
+
+           var timerID = setInterval(updateTime, 1000);
+           updateTime();
+
+
+
+        console.log(res_list)
+
+    }
+)
+    }
+function next_hour_update(){
+        //获取当前时间
+        var nowtime = new Date().getTime();
+        //获取下一个小时
+        var h = new Date().getHours() + 1;
+        // 获取下一个小时的时间戳
+        var end = new Date(new Date(new Date().toLocaleDateString()).getTime() + h * 60 * 60 * 1000 - 1).getTime();
+        var timing = end - nowtime;
+        setInterval(() => {
+            console.log("页面数据已刷新！")
+           update_message()
+        }, timing);
+}
+update_message()
+next_hour_update()
+
+    $(document).ready(function () {
+    namespace = '/dcenter';
+    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
+    console.log(socket)
+    socket.on('dcenter', function (res) {
+        var t = res.data;
+        var t_video_src=res.video_src;
+
+        console.log(t)
+        console.log(t_video_src)
+        if (t==="next video!"){
+             console.log("执行播放下一段视频的操作！")
+             bgvid.src ="../."+t_video_src
+
+        }
+        else if(t==="last video!"){
+            console.log("执行播放上一段视频的操作！")
+            bgvid.src ="../."+t_video_src
+        }
+        else if(t==="show_mode_1!"){
+            console.log("切换为正常显示模式！")
+            mmd_uibox.show()
+        }
+        else if(t==="show_mode_2!"){
+            console.log("切换为UI隐藏模式！")
+            mmd_uibox.hide()
+        }
+        else if(t==="play_mode_1!"){
+            console.log("切换为单个循环模式！")
+            bgvid.loop=true
+        }
+        else if(t==="play_mode_2!"){
+            console.log("切换为列表播放模式！")
+            bgvid.loop=false
+        }
+    });
+});
+
+</script>
+</body>
+</html>
