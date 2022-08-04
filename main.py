@@ -34,26 +34,26 @@ class MyMainForm(QMainWindow, design.Ui_Form):
         self.textBrowser.append('MMD-BOX服务已开启！')
         self.work.start()
     def open_website(self):
-        webbrowser.open("http://127.0.0.1:5050")
+        webbrowser.open("http://10.1.2.244:5050")
     def open_path(self):
         os.startfile(os.getcwd()+'/static/video')
     def push_once(self):
-        requests.get("http://127.0.0.1:5050/nextvideo")
+        requests.get("http://10.1.2.244:5050/nextvideo")
         return self.textBrowser.append('已切换至下一个视频！')
     def push_once_last(self):
-        requests.get("http://127.0.0.1:5050/lastvideo")
+        requests.get("http://10.1.2.244:5050/lastvideo")
         return self.textBrowser.append('已切换至上一个视频！')
     def play_mode_1(self):
-        requests.get("http://127.0.0.1:5050/play_mode_1")
+        requests.get("http://10.1.2.244:5050/play_mode_1")
         return self.textBrowser.append('已切换至单个视频循环！')
     def play_mode_2(self):
-        requests.get("http://127.0.0.1:5050/play_mode_2")
+        requests.get("http://10.1.2.244:5050/play_mode_2")
         return self.textBrowser.append('已切换至列表视频循环！')
     def show_mode_1(self):
-        requests.get("http://127.0.0.1:5050/show_mode_1")
+        requests.get("http://10.1.2.244:5050/show_mode_1")
         return self.textBrowser.append('已切换至显示UI模式！')
     def show_mode_2(self):
-        requests.get("http://127.0.0.1:5050/show_mode_2")
+        requests.get("http://10.1.2.244:5050/show_mode_2")
         return self.textBrowser.append('已切换至隐藏UI模式！')
 class WorkThread(QThread):
     # 自定义信号对象。参数str就代表这个信号可以传一个字符串
@@ -67,6 +67,7 @@ class WorkThread(QThread):
         #重写线程执行的run函数
         #触发自定义信号
         run.start()
+        #os.system('run.py')
 
 
 
@@ -75,7 +76,7 @@ def start_sever(ui):
     ui.pushButton_2.setEnabled(True)
     ui.label.setText("服务运行中")
     ui.label.setStyleSheet("color:green")
-    webbrowser.open("http://127.0.0.1:5050")
+    webbrowser.open("http://10.1.2.244:5050")
 
 def end_sever(ui):
     ui.textBrowser.append('MMD-BOX服务已关闭！')

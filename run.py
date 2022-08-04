@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 import os
 import json
+import sys
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret_key'
@@ -11,6 +12,11 @@ socketio.init_app(app, cors_allowed_origins='*')
 
 name_space = '/dcenter'
 
+if getattr(sys, 'frozen', False):
+     template_folder = os.path.join(sys.executable, '..','templates')
+     static_folder = os.path.join(sys.executable, '..','static')
+     app = Flask(__name__, template_folder = template_folder,\
+           static_folder = static_folder)
 
 #python端更新json
 def update_json(dir,name,content):
@@ -57,7 +63,7 @@ def mtest_message(message):
 
 @app.route('/')
 def index():
-    return render_template('box_view/index.html')
+    return render_template('index.html')
 
 #播放下一段视频
 @app.route('/nextvideo')
@@ -162,8 +168,11 @@ def show_config():
     return row_data
 
 
-
 def start():
-    socketio.run(app, host='0.0.0.0', port=5050, debug=False,use_reloader=False)
+    socketio.run(app, host='0.0.0.0', port=5050, debug=True,use_reloader=False)
+
+if __name__ == '__main__':
+    socketio.run(app, host='0.0.0.0', port=5050, debug=True, use_reloader=False)
+
 
 
