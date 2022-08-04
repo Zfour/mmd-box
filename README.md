@@ -54,3 +54,6 @@
 2.图形界面如下
 
 ![image](https://user-images.githubusercontent.com/19563906/182721739-2bfad9e1-ab27-4cb5-bec7-acdc33a839eb.png)
+
+## 2022/8/5
+1.修复了已知bug，跑通exe，发布Beta1.0版本，拟定周末撰写教程。
