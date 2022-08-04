@@ -1,4 +1,4 @@
-import json
+import datetime
 import os
 import sys
 from PyQt5.QtWidgets import QApplication , QMainWindow
@@ -31,30 +31,30 @@ class MyMainForm(QMainWindow, design.Ui_Form):
         self.radioButton_4.clicked.connect(self.show_mode_2)
     def execute(self):
         # 启动线程
-        self.textBrowser.append('MMD-BOX服务已开启！')
+        self.textBrowser.append('【'+datetime.datetime.now().strftime('%H:%M:%S')+'】 MMD-BOX服务已开启！')
         self.work.start()
     def open_website(self):
-        webbrowser.open("http://10.1.2.244:5050")
+        webbrowser.open("http://127.0.0.1:5050")
     def open_path(self):
         os.startfile(os.getcwd()+'/static/video')
     def push_once(self):
-        requests.get("http://10.1.2.244:5050/nextvideo")
-        return self.textBrowser.append('已切换至下一个视频！')
+        requests.get("http://127.0.0.1:5050/nextvideo")
+        return self.textBrowser.append('【'+datetime.datetime.now().strftime('%H:%M:%S')+'】 已切换至下一个视频！>>> '+requests.get("http://127.0.0.1:5050/show_config").json()['current_video_src'])
     def push_once_last(self):
-        requests.get("http://10.1.2.244:5050/lastvideo")
-        return self.textBrowser.append('已切换至上一个视频！')
+        requests.get("http://127.0.0.1:5050/lastvideo")
+        return self.textBrowser.append('【'+datetime.datetime.now().strftime('%H:%M:%S')+'】 已切换至上一个视频！>>> '+requests.get("http://127.0.0.1:5050/show_config").json()['current_video_src'])
     def play_mode_1(self):
-        requests.get("http://10.1.2.244:5050/play_mode_1")
-        return self.textBrowser.append('已切换至单个视频循环！')
+        requests.get("http://127.0.0.1:5050/play_mode_1")
+        return self.textBrowser.append('【'+datetime.datetime.now().strftime('%H:%M:%S')+'】 已切换至单个视频循环！')
     def play_mode_2(self):
-        requests.get("http://10.1.2.244:5050/play_mode_2")
-        return self.textBrowser.append('已切换至列表视频循环！')
+        requests.get("http://127.0.0.1:5050/play_mode_2")
+        return self.textBrowser.append('【'+datetime.datetime.now().strftime('%H:%M:%S')+'】 已切换至列表视频循环！')
     def show_mode_1(self):
-        requests.get("http://10.1.2.244:5050/show_mode_1")
-        return self.textBrowser.append('已切换至显示UI模式！')
+        requests.get("http://127.0.0.1:5050/show_mode_1")
+        return self.textBrowser.append('【'+datetime.datetime.now().strftime('%H:%M:%S')+'】 已切换至显示UI模式！')
     def show_mode_2(self):
-        requests.get("http://10.1.2.244:5050/show_mode_2")
-        return self.textBrowser.append('已切换至隐藏UI模式！')
+        requests.get("http://127.0.0.1:5050/show_mode_2")
+        return self.textBrowser.append('【'+datetime.datetime.now().strftime('%H:%M:%S')+'】 已切换至隐藏UI模式！')
 class WorkThread(QThread):
     # 自定义信号对象。参数str就代表这个信号可以传一个字符串
     trigger = pyqtSignal(str)
@@ -76,7 +76,7 @@ def start_sever(ui):
     ui.pushButton_2.setEnabled(True)
     ui.label.setText("服务运行中")
     ui.label.setStyleSheet("color:green")
-    webbrowser.open("http://10.1.2.244:5050")
+    webbrowser.open("http://127.0.0.1:5050")
 
 def end_sever(ui):
     ui.textBrowser.append('MMD-BOX服务已关闭！')
@@ -93,13 +93,13 @@ def open_info(ui):
             load_dict = json.load(load_f)
             print(load_dict)
             if load_dict["current_show_mode"]==1:
-                ui.radioButton.setChecked(1)
-            elif load_dict["current_show_mode"]==2:
-                ui.radioButton_2.setChecked(1)
-            if load_dict["play_mode"] == 1:
                 ui.radioButton_3.setChecked(1)
-            elif load_dict["play_mode"] == 2:
+            elif load_dict["current_show_mode"]==2:
                 ui.radioButton_4.setChecked(1)
+            if load_dict["play_mode"] == 1:
+                ui.radioButton.setChecked(1)
+            elif load_dict["play_mode"] == 2:
+                ui.radioButton_2.setChecked(1)
     except:
         with open("static/config.json", "w", encoding='utf-8') as w_f:
             result = {"current_video_src": "./static/video/1.mp4", "current_show_mode": 1, "play_mode": 1}

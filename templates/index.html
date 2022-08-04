@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>伪全息盒子时钟 Beta 0.1</title>
+    <title>伪全息盒子时钟 Beta 1.0</title>
     <style>
         html,body
 {
@@ -115,7 +115,8 @@ $.getJSON('static/config.json','', function(data) {
     bgvid.src =data['current_video_src']
 
     bgvid.addEventListener("ended",function (){
-        $.get(window.location.href+"nextvideo")
+        res=$.get(window.location.href+"nextvideo")
+        console.log(res.text)
         console.log("自动切换下一个视频！")
         }
     )
@@ -144,7 +145,6 @@ if (current_play_mode_id===1){
 <span class="card-clock-humidity">💧 ${res_list[4]}</span>
 </div>
   <div class="clock-row"><span id="card-clock-time" class="card-clock-time"></span></div>
-
   <div class="clock-row">
   <span class="card-clock-ip">${returnCitySN["cip"]}</span>
 <span class="card-clock-location">${res_list[0]}</span>
@@ -213,7 +213,6 @@ next_hour_update()
     $(document).ready(function () {
     namespace = '/dcenter';
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
-    console.log(socket)
     socket.on('dcenter', function (res) {
         var t = res.data;
         var t_video_src=res.video_src;
